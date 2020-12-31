@@ -1,0 +1,15 @@
+.notes-editor-wrapper {
+    display: flex;
+    width: 100%;
+    padding: 10px 10%;
+    flex-direction: column;
+}
+
+.notes-editor-wrapper .button-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.notes-editor-wrapper .button-wrapper .button {
+    margin: 5px 0 0 5px;
+}

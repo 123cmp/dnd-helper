@@ -1,0 +1,16 @@
+.home-page-wrapper {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.home-page-wrapper .title {
+    text-transform: uppercase;
+    padding: 25px 0;
+}
+
+.home-page-wrapper .notes, .home-page-wrapper .description {
+    padding: 0 10%;
+    cursor: pointer;
+}

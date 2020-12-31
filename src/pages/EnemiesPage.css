@@ -1,0 +1,21 @@
+.enemies-list-wrapper {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 0 10%;
+}
+
+.enemies-list-wrapper .title {
+    text-transform: uppercase;
+    padding: 25px 0;
+}
+
+.enemies-list-wrapper .enemies-list-search {
+    width: 100%;
+    padding: 15px 0;
+}
+
+.enemies-list-wrapper .enemies-list-search .form-control {
+    width: 100%;
+}

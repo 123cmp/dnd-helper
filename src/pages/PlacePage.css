@@ -1,0 +1,11 @@
+.place-content {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.place-content section {
+    text-align: center;
+    width: 25%
+}
