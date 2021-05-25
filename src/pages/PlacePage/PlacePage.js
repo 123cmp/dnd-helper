@@ -1,8 +1,12 @@
 import React, {useState} from "react";
-import CommonPage from "./CommonPage";
+import CommonPage from "../CommonPage";
 import "./PlacePage.css";
-import CommonList from "../components/CommonList";
-import ImageList from "../components/ImageList";
+import CommonList from "../../components/CommonList";
+import ImageList from "../../components/ImageList";
+import {enemy, isEnemiesLoaded, searchResult} from "../../store/selectors";
+import { connect } from "react-redux";
+import {openModal} from "../../store/actionCreators";
+import {ADD_ENEMY_MODAL, ADD_IMAGE_MODAL, ADD_ITEM_MODAL} from "../../constants";
 
 const defaultPlace = {
     id: '1',
@@ -39,13 +43,19 @@ const defaultPlace = {
     ]
 }
 
-export default function PlacePage(props) {
+function PlacePage({openModal}) {
     const [ isNotesEdit, setIsNotesEdit ] = useState(false)
     const [ isDescriptionEdit, setIsDescriptionEdit ] = useState(false)
     const [ place, setPlace ] = useState(defaultPlace)
-    const onAddItemClick = () => {};
-    const onAddImageClick = () => {};
-    const onAddEnemyClick = () => {};
+    const onAddItemClick = () => {
+        openModal(ADD_ITEM_MODAL)
+    };
+    const onAddImageClick = () => {
+        openModal(ADD_IMAGE_MODAL)
+    };
+    const onAddEnemyClick = () => {
+        openModal(ADD_ENEMY_MODAL)
+    };
     const onAddNPCClick = () => {};
 
     return <section className="home-page-wrapper">
@@ -70,10 +80,20 @@ export default function PlacePage(props) {
                     <h2>Enemies:</h2>
                     <CommonList onAddItemClick={onAddEnemyClick} items={place.enemies}/>
                 </section>
-                <section className="images-wrapper"><h2>Items:</h2>
+                <section className="images-wrapper"><h2>Images:</h2>
                     <ImageList onAddItemClick={onAddImageClick} items={place.images}/>
                 </section>
             </div>
         </CommonPage>
     </section>
 }
+
+const mapStateToProps = (store, ownProps) => ({
+
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    openModal: (name) => dispatch(openModal(name))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PlacePage);

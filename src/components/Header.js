@@ -7,13 +7,19 @@ import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import { connect } from "react-redux";
 import {getCurrentAdventure} from "../store/selectors";
-import {changeAdventureName} from "../store/actionCreators";
+import {changeAdventureName, closeModal, openModal} from "../store/actionCreators";
+import {ADD_PLACE_MODAL} from "../constants";
 
 function Header({
     currentAdventure,
-    changeAdventureName
+    changeAdventureName,
+    openPlaceModal
 } ) {
     const buttonHandler = () => changeAdventureName("ASSDDAA");
+
+    if(!currentAdventure) {
+        return <></>
+    }
 
     return (<Navbar bg="light" expand="lg">
         <NavDropdown title={currentAdventure.name} id="basic-nav-dropdown">
@@ -34,7 +40,7 @@ function Header({
                     <NavDropdown.Item href="/places/2">Место 2</NavDropdown.Item>
                     <NavDropdown.Item href="/places/3">Место 3</NavDropdown.Item>
                     <NavDropdown.Divider/>
-                    <NavDropdown.Item href="#">Добавить место</NavDropdown.Item>
+                    <NavDropdown.Item href="#" onClick={openPlaceModal}>Добавить место</NavDropdown.Item>
                 </NavDropdown>
                 <Nav.Link href="/enemies">Бестиарий</Nav.Link>
             </Nav>
@@ -53,9 +59,10 @@ const mapStateToProps = (state) => {
     }
 }
 
-const mapDispatchToProps = {
-    changeAdventureName
-}
+const mapDispatchToProps = (dispatch) => ({
+    changeAdventureName: () => dispatch(changeAdventureName()),
+    openPlaceModal: () => dispatch(openModal(ADD_PLACE_MODAL))
+})
 
 export default connect(
     mapStateToProps,

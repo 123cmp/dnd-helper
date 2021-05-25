@@ -1,0 +1,17 @@
+.helper-modal {
+    padding: 20px 10%;
+}
+
+.helper-modal section:first-child {
+    padding: 0 0 50px 0;
+}
+
+.helper-modal .default-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.helper-modal .default-form * {
+    margin-bottom: 25px;
+}

@@ -5,11 +5,12 @@
     flex-direction: column;
 }
 
-.notes-editor-wrapper .button-wrapper {
+.button-wrapper {
     display: flex;
     flex-direction: row-reverse;
+    padding: 1rem 2rem;
 }
 
-.notes-editor-wrapper .button-wrapper .button {
+.button-wrapper .button {
     margin: 5px 0 0 5px;
 }

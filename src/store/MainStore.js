@@ -1,15 +1,24 @@
-import {applyMiddleware, createStore} from "redux";
+import {applyMiddleware, compose, createStore} from "redux";
 import rootReducer from "./reducers";
 import thunkMiddleware from 'redux-thunk';
-import {loadEnemies} from "./actionCreators";
+import {loadAdventures, loadEnemies, loadPlaces} from "./actionCreators";
+
+const composeEnhancers =
+    typeof window === 'object' &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose;
+
+const enhancer = composeEnhancers(
+    applyMiddleware(thunkMiddleware),
+);
 
 const store = createStore(
     rootReducer,
-    applyMiddleware(
-        thunkMiddleware
-    )
+    enhancer,
 );
 
 store.dispatch(loadEnemies());
+store.dispatch(loadAdventures());
+store.dispatch(loadPlaces());
 
 export default store;

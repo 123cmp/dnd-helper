@@ -1,6 +1,11 @@
-import './HomePage.css'
-import React from "react";
-import NotesEditor from "../components/NotesEditor";
+import './HomePage/HomePage.css'
+import React, {useState} from "react";
+import MarkdownIt from 'markdown-it'
+import MdEditor from 'react-markdown-editor-lite'
+import 'react-markdown-editor-lite/lib/index.css';
+import Button from "react-bootstrap/Button";
+
+const mdParser = new MarkdownIt();
 
 export default function CommonPage({
         model,
@@ -8,43 +13,86 @@ export default function CommonPage({
         isNotesEdit,
         setIsNotesEdit,
         setIsDescriptionEdit,
+        updateModel,
         setModel,
         children
     }) {
-        const toggleNotes = () => setIsNotesEdit(!isNotesEdit)
-        const toggleDescription = () => setIsDescriptionEdit(!isDescriptionEdit)
 
-        const handleNotesClick = toggleNotes
-        const handleDescriptionClick = toggleDescription
-        const onNotesDiscard = toggleNotes
-        const onDescriptionDiscard = toggleDescription
-        const onNotesApply = (data) => {
-            setModel({ ...model, notes: data })
-            toggleNotes()
+    const toggleNotes = () => setIsNotesEdit(!isNotesEdit)
+    const toggleDescription = () => setIsDescriptionEdit(!isDescriptionEdit)
+
+    const handleNotesClick = toggleNotes;
+    const handleDescriptionClick = toggleDescription;
+    const [ internalModel, setInternalModel ] = useState(model);
+    const onNotesApply = () => {
+        updateModel(internalModel)
+        toggleNotes()
+    }
+    const onDescriptionDiscard = () => {
+        setInternalModel({ ...internalModel, description: model.description });
+        toggleDescription();
+    }
+    const onNotesDiscard = () => {
+        setInternalModel({ ...internalModel, notes: model.notes });
+        toggleNotes();
+    }
+    const onDescriptionApply = () => {
+        updateModel(internalModel)
+        toggleDescription();
+    }
+    const onNotesChange = (data) => {
+        setInternalModel({ ...internalModel, notes: data.text });
+    }
+    const onDescriptionChange = (data) => {
+        setInternalModel({ ...internalModel, description: data.text });
+    }
+    const getHtml = (text) => {
+        return mdParser.render(text)
+    }
+
+    return <>
+        <h1 className="title">{model.name}</h1>
+
+        {
+            isDescriptionEdit
+                ? (<div>
+                        <MdEditor
+                            renderHTML={(text) => mdParser.render(text)}
+                            style={{'height': '500px'}}
+                            value={internalModel.description}
+                            onChange={onDescriptionChange}
+                        />
+                        <div className="button-wrapper">
+                            <Button onClick={onDescriptionApply} className="button" variant="primary">Apply</Button>
+                            <Button onClick={onDescriptionDiscard} className="button" variant="secondary">Discard</Button>
+                        </div>
+                    </div>
+                )
+                : <p className="description custom-html-style"
+                     dangerouslySetInnerHTML={{__html: getHtml(internalModel.description)}}
+                     onClick={handleDescriptionClick}>
+                </p>
         }
-        const onDescriptionApply = (data) => {
-            setModel({ ...model, description: data })
-            toggleDescription()
+        {
+            isNotesEdit
+                ? (<div>
+                        <MdEditor
+                            renderHTML={(text) => mdParser.render(text)}
+                            onChange={onNotesChange}
+                            value={internalModel.notes}
+                        />
+                        <div className="button-wrapper custom-html-style">
+                            <Button onClick={onNotesApply} className="button" variant="primary">Apply</Button>
+                            <Button onClick={onNotesDiscard} className="button" variant="secondary">Discard</Button>
+                        </div>
+                    </div>
+                )
+                : <p className="notes"
+                     dangerouslySetInnerHTML={{__html: getHtml(internalModel.notes)}}
+                     onClick={handleNotesClick}>
+                </p>
         }
 
-        return <>
-            <h1 className="title">{model.name}</h1>
-            {
-                isDescriptionEdit
-                    ? <NotesEditor onApply={onDescriptionApply} onDiscard={onDescriptionDiscard} value={model.description}/>
-                    : <p className="description" onClick={handleDescriptionClick}>
-                        {model.description}
-                    </p>
-            }
-
-            {
-                isNotesEdit
-                    ? <NotesEditor onApply={onNotesApply} onDiscard={onNotesDiscard} value={model.notes}/>
-                    : <p className="notes" onClick={handleNotesClick}>
-                        {model.notes}
-                    </p>
-            }
-
-            { children }
-        </>
+        {children}
+    </>
 }
