@@ -1,13 +1,12 @@
 import React, {useState} from "react";
 import {connect} from "react-redux";
 import CommonModal from "./CommonModal";
-import {closeModal} from "../../store/actionCreators";
+import {closeModal, createPlace} from "../../store/actionCreators";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
-import NotesEditor from "../NotesEditor";
 
-function AddPlaceModal({modalIsOpen, closeModal}) {
+function AddPlaceModal({modalIsOpen, closeModal, createPlace}) {
     const [ placeEntity, setPlaceEntity ] = useState({
         name: "",
         description: "",
@@ -22,8 +21,8 @@ function AddPlaceModal({modalIsOpen, closeModal}) {
     }
 
     const submitPlaceEntity = () => {
-        console.log(placeEntity)
-        closeModal()
+        createPlace(placeEntity);
+        closeModal();
     }
 
     return <CommonModal
@@ -46,7 +45,8 @@ function AddPlaceModal({modalIsOpen, closeModal}) {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    closeModal: () => dispatch(closeModal())
+    closeModal: () => dispatch(closeModal()),
+    createPlace: (place) => dispatch(createPlace({...place, id: place.name}))
 })
 
 export default connect(null, mapDispatchToProps)(AddPlaceModal)

@@ -1,11 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import CommonPage from "../CommonPage";
 import "./PlacePage.css";
 import CommonList from "../../components/CommonList";
 import ImageList from "../../components/ImageList";
-import {enemy, isEnemiesLoaded, searchResult} from "../../store/selectors";
+import {getAdventureLoaded, getPlace} from "../../store/selectors";
 import { connect } from "react-redux";
-import {openModal} from "../../store/actionCreators";
+import {loadPlaces, openModal, savePlace, updatePlace} from "../../store/actionCreators";
 import {ADD_ENEMY_MODAL, ADD_IMAGE_MODAL, ADD_ITEM_MODAL} from "../../constants";
 
 const defaultPlace = {
@@ -43,10 +43,24 @@ const defaultPlace = {
     ]
 }
 
-function PlacePage({openModal}) {
+function PlacePage({match, openModal, initialPlace, loadPlaces, adventureLoaded, updatePlace}) {
     const [ isNotesEdit, setIsNotesEdit ] = useState(false)
     const [ isDescriptionEdit, setIsDescriptionEdit ] = useState(false)
-    const [ place, setPlace ] = useState(defaultPlace)
+    const [ place, setPlace ] = useState(defaultPlace);
+
+    useEffect(
+        async () => {
+            if(initialPlace) {
+                return setPlace(Object.assign({}, defaultPlace, initialPlace));
+            }
+            const places = await loadPlaces();
+            const currentPlace = places.payload.find(
+                place => place._id ===  match.params.id
+            )
+            setPlace(Object.assign({}, defaultPlace, currentPlace));
+        }, [match]
+    );
+
     const onAddItemClick = () => {
         openModal(ADD_ITEM_MODAL)
     };
@@ -58,42 +72,55 @@ function PlacePage({openModal}) {
     };
     const onAddNPCClick = () => {};
 
+    const updatePlaceHandler = (place) => {
+        setPlace(place);
+        updatePlace(place)
+    };
+
     return <section className="home-page-wrapper">
-        <CommonPage
-            model={place}
-            isDescriptionEdit={isDescriptionEdit}
-            isNotesEdit={isNotesEdit}
-            setIsNotesEdit={setIsNotesEdit}
-            setIsDescriptionEdit={setIsDescriptionEdit}
-            setModel={setPlace}
-        >
-            <div className="place-content">
-                <section className="npcs-wrapper">
-                    <h2>NPC:</h2>
-                    <CommonList onAddItemClick={onAddNPCClick} items={place.NPCs}/>
-                </section>
-                <section className="items-wrapper">
-                    <h2>Items:</h2>
-                    <CommonList onAddItemClick={onAddItemClick} items={place.items}/>
-                </section>
-                <section className="enemies-wrapper">
-                    <h2>Enemies:</h2>
-                    <CommonList onAddItemClick={onAddEnemyClick} items={place.enemies}/>
-                </section>
-                <section className="images-wrapper"><h2>Images:</h2>
-                    <ImageList onAddItemClick={onAddImageClick} items={place.images}/>
-                </section>
-            </div>
-        </CommonPage>
+        {
+            adventureLoaded ?
+                <CommonPage
+                    model={place}
+                    isDescriptionEdit={isDescriptionEdit}
+                    isNotesEdit={isNotesEdit}
+                    setIsNotesEdit={setIsNotesEdit}
+                    setIsDescriptionEdit={setIsDescriptionEdit}
+                    updateModel={updatePlaceHandler}
+                >
+                    <div className="place-content">
+                        <section className="npcs-wrapper">
+                            <h2>NPC:</h2>
+                            <CommonList onAddItemClick={onAddNPCClick} items={place.NPCs}/>
+                        </section>
+                        <section className="items-wrapper">
+                            <h2>Items:</h2>
+                            <CommonList onAddItemClick={onAddItemClick} items={place.items}/>
+                        </section>
+                        <section className="enemies-wrapper">
+                            <h2>Enemies:</h2>
+                            <CommonList onAddItemClick={onAddEnemyClick} items={place.enemies}/>
+                        </section>
+                        <section className="images-wrapper"><h2>Images:</h2>
+                            <ImageList onAddItemClick={onAddImageClick} items={place.images}/>
+                        </section>
+                    </div>
+                </CommonPage>
+                : <div>Loading</div>
+        }
+
     </section>
 }
 
 const mapStateToProps = (store, ownProps) => ({
-
+    initialPlace: getPlace(store, ownProps.match.params.id),
+    adventureLoaded: getAdventureLoaded(store),
 })
 
 const mapDispatchToProps = (dispatch) => ({
-    openModal: (name) => dispatch(openModal(name))
+    openModal: (name) => dispatch(openModal(name)),
+    loadPlaces: () => dispatch(loadPlaces()),
+    updatePlace: (place) => dispatch(updatePlace(place))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlacePage);

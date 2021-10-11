@@ -1,5 +1,5 @@
 import './HomePage/HomePage.css'
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import MarkdownIt from 'markdown-it'
 import MdEditor from 'react-markdown-editor-lite'
 import 'react-markdown-editor-lite/lib/index.css';
@@ -14,7 +14,6 @@ export default function CommonPage({
         setIsNotesEdit,
         setIsDescriptionEdit,
         updateModel,
-        setModel,
         children
     }) {
 
@@ -24,6 +23,11 @@ export default function CommonPage({
     const handleNotesClick = toggleNotes;
     const handleDescriptionClick = toggleDescription;
     const [ internalModel, setInternalModel ] = useState(model);
+
+    useEffect(() => {
+        setInternalModel(model);
+    }, [model])
+
     const onNotesApply = () => {
         updateModel(internalModel)
         toggleNotes()

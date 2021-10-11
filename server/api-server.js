@@ -38,7 +38,7 @@ app.post('/adventures', async (req, res) => {
             $set: req.body
         }
     );
-    res.status(200).send(result)
+    res.status(200).send(req.body)
 })
 
 app.get('/places', async (req, res) => {
@@ -61,14 +61,14 @@ app.post('/places', async (req, res) => {
             $set: req.body
         }
     );
-    res.status(200).send(result)
+    res.status(200).send(req.body)
 })
 
 app.put('/places', async (req, res) => {
     const result = await connection.db.collection('places').insertOne(
        req.body
     );
-    res.status(200).send(result)
+    res.status(200).send(req.body)
 })
 
 app.listen(port, () => {

@@ -10,6 +10,12 @@ export const getPlaces = store => {
     return store.adventure.places;
 }
 
+export const getPlace = (store, id) => {
+    return store.adventure.places.find(
+        place => place.id.replace("/", "") === id.replace("/", "")
+    );
+}
+
 export const enemies = store => {
     return store.enemies.enemies
 }
